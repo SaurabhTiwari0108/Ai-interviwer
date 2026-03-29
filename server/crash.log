@@ -1,0 +1,22 @@
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open 'C:\Users\CHOTACODERR\Desktop\ai interview taker\server\test\data\05-versions-space.pdf'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (C:\Users\CHOTACODERR\Desktop\ai interview taker\server\node_modules\pdf-parse\index.js:15:25)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10)
+    at Module.load (node:internal/modules/cjs/loader:1533:32)
+    at Module._load (node:internal/modules/cjs/loader:1335:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at loadCJSModuleWithModuleLoad (node:internal/modules/esm/translators:328:3)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:233:7) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\CHOTACODERR\\Desktop\\ai interview taker\\server\\test\\data\\05-versions-space.pdf'
+}
+
+Node.js v24.14.0
