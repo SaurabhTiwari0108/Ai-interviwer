@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import 'dotenv/config';
 import Interview from './models/Interview.js';
 import User from './models/User.js';
-import { generateQuestionsForRound } from './services/gemini.service.js';
+import { generateQuestionsForRound } from './services/ai.service.js';
 
 async function testStart() {
   await mongoose.connect(process.env.MONGO_URI);

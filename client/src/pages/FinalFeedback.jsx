@@ -65,7 +65,19 @@ const FinalFeedback = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-[#0a0a0a] text-slate-50 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden relative">
+    <div className="min-h-[calc(100vh-4rem)] bg-[#030712] text-slate-50 py-12 px-4 sm:px-6 lg:px-8 overflow-hidden relative">
+      {/* Abstract Background Elements */}
+      <motion.div 
+        animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/30 blur-[150px] pointer-events-none mix-blend-screen" 
+      />
+      <motion.div 
+        animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.5, 0.2] }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-fuchsia-600/30 blur-[150px] pointer-events-none mix-blend-screen" 
+      />
+
       <div className="max-w-6xl mx-auto relative z-10 flex flex-col lg:flex-row gap-8">
         
         {/* Left Col: Robot Interviewer */}
@@ -95,7 +107,7 @@ const FinalFeedback = () => {
         {/* Right Col: Feedback Cards */}
         <div className="w-full lg:w-2/3 flex flex-col gap-6">
            
-           <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} className="bg-[#1e1e1e] border border-indigo-500/30 p-8 rounded-2xl shadow-xl relative overflow-hidden">
+           <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} className="bg-white/5 backdrop-blur-3xl border border-indigo-500/30 p-8 rounded-[2rem] shadow-[0_20px_50px_-15px_rgba(99,102,241,0.3)] relative overflow-hidden transition-colors hover:border-indigo-500/50">
              <div className="absolute top-0 right-0 p-8 opacity-10 blur-[2px]"><Award className="w-32 h-32 text-indigo-500"/></div>
              <h2 className="text-sm font-black text-indigo-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                <Brain className="w-4 h-4"/> AI Executive Summary
@@ -107,7 +119,7 @@ const FinalFeedback = () => {
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Strengths */}
-              <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.1}} className="bg-[#1e1e1e] border border-green-500/30 p-6 rounded-2xl">
+              <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.1}} className="bg-white/5 backdrop-blur-3xl shadow-[0_20px_40px_-15px_rgba(34,197,94,0.2)] border border-green-500/30 p-8 rounded-[1.5rem] transition-colors hover:border-green-500/50">
                  <h3 className="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">
                     <TrendingUp className="w-5 h-5"/> Key Strengths
                  </h3>
@@ -122,7 +134,7 @@ const FinalFeedback = () => {
               </motion.div>
 
               {/* Weaknesses */}
-              <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.2}} className="bg-[#1e1e1e] border border-red-500/30 p-6 rounded-2xl">
+              <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.2}} className="bg-white/5 backdrop-blur-3xl shadow-[0_20px_40px_-15px_rgba(239,68,68,0.2)] border border-red-500/30 p-8 rounded-[1.5rem] transition-colors hover:border-red-500/50">
                  <h3 className="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
                     <TrendingDown className="w-5 h-5"/> Areas for Improvement
                  </h3>
@@ -138,7 +150,7 @@ const FinalFeedback = () => {
            </div>
 
            {/* Suggestions */}
-           <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.3}} className="bg-[#1e1e1e] border border-slate-700 p-8 rounded-2xl">
+           <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay: 0.3}} className="bg-white/5 backdrop-blur-3xl shadow-[0_20px_50px_-15px_rgba(245,158,11,0.2)] border border-amber-500/30 p-8 rounded-[2rem] transition-colors hover:border-amber-500/50">
              <h3 className="text-lg font-bold text-amber-400 mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5"/> Actionable Improvement Suggestions
              </h3>

@@ -1,6 +1,6 @@
 import Interview from '../models/Interview.js';
 import User from '../models/User.js';
-import { generateQuestionsForRound, evaluateAnswer, evaluateCode } from '../services/gemini.service.js';
+import { generateQuestionsForRound, evaluateAnswer, evaluateCode } from '../services/ai.service.js';
 import { fetchUserRepositories } from '../services/github.service.js';
 import { verifySubmission } from '../utils/leetcodeFetcher.js';
 import { runTestCases } from '../utils/testRunner.js';
@@ -70,6 +70,10 @@ export const startRound = async (req, res) => {
       // Generate context-aware questions
       const rawQuestions = await generateQuestionsForRound(parseInt(roundNumber), user.name, user.skills, repos, user.resumeText);
       
+      if (!Array.isArray(rawQuestions)) {
+         throw new Error("AI failed to return an array of questions. Raw response: " + JSON.stringify(rawQuestions));
+      }
+      
       questions = rawQuestions.map((q) => ({
         ...q
       }));
@@ -128,7 +132,7 @@ export const submitAnswer = async (req, res) => {
         improvementSuggestions: isCorrect ? 'Correct logic applied.' : `Incorrect. The correct answer is: ${questionObj.correctAnswer}`
       };
     } else if (parseInt(roundNumber) === 3) {
-      const { evaluateCodeAndExplanation, evaluateFollowUpAnswer } = await import('../services/gemini.service.js');
+      const { evaluateCodeAndExplanation, evaluateFollowUpAnswer } = await import('../services/ai.service.js');
       if (!questionObj.followUpQuestion) {
         evaluation = await evaluateCodeAndExplanation(questionObj.question, codeAnswer, voiceAnswer || answerText);
         questionObj.codeAnswer = codeAnswer;
@@ -145,7 +149,7 @@ export const submitAnswer = async (req, res) => {
       }
     } else if ([4, 5].includes(parseInt(roundNumber))) {
        const userDoc = await User.findById(userId);
-       const { evaluateContextualAnswer } = await import('../services/gemini.service.js');
+       const { evaluateContextualAnswer } = await import('../services/ai.service.js');
        
        let contextText = userDoc.resumeText || '';
        if (parseInt(roundNumber) === 5) {
@@ -337,7 +341,7 @@ export const getFinalFeedback = async (req, res) => {
        return res.status(200).json(interview.finalFeedback);
     }
 
-    const { generateFinalFeedback } = await import('../services/gemini.service.js');
+    const { generateFinalFeedback } = await import('../services/ai.service.js');
     const feedback = await generateFinalFeedback(interview);
 
     interview.finalFeedback = feedback;

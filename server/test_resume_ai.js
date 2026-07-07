@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { extractTextFromPDF } from './services/pdf.service.js';
-import { extractProfileFromResume } from './services/gemini.service.js';
+import { extractProfileFromResume } from './services/ai.service.js';
 import 'dotenv/config';
 
 async function test() {

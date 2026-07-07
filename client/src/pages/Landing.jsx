@@ -17,7 +17,7 @@ const features = [
   },
   {
     name: 'Real-time Evaluation',
-    description: 'Get instant, deeply technical feedback from Gemini AI. We analyze clarity, accuracy, and structural completeness.',
+    description: 'Get instant, deeply technical feedback from Hybrid System. We analyze clarity, accuracy, and structural completeness.',
     icon: BrainCircuit,
     color: 'from-fuchsia-500 to-pink-500',
   },
@@ -41,7 +41,7 @@ const Landing = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-indigo-300 mb-8 backdrop-blur-md"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Powered by Google Gemini Pro</span>
+            <span>Powered by Hybrid System</span>
           </motion.div>
 
           <motion.h1 

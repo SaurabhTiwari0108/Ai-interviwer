@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Github, Code, PlayCircle, Loader2, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { getUserDashboard, fetchGithubAnalysis, initInterview } from '../services/api';
+import { Github, Code, PlayCircle, Loader2, AlertCircle, ArrowRight, Server } from 'lucide-react';
+import { getUserDashboard, initInterview } from '../services/api';
 import { motion } from 'framer-motion';
 
 const ResumeAnalysis = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
-  const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [initializing, setInitializing] = useState(false);
   const [error, setError] = useState('');
@@ -20,11 +19,6 @@ const ResumeAnalysis = () => {
         // We reuse the dashboard endpoint to get the user profile
         const { profile } = await getUserDashboard(userId);
         setProfile(profile);
-
-        if (profile.githubUsername) {
-          const reposData = await fetchGithubAnalysis(profile.githubUsername);
-          setRepos(reposData);
-        }
       } catch (err) {
         setError('Failed to load profile data.');
       } finally {
@@ -72,8 +66,8 @@ const ResumeAnalysis = () => {
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[#030712] relative overflow-hidden text-slate-50 selection:bg-indigo-500/30">
       {/* Dynamic Orbs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/10 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-fuchsia-600/10 blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/20 blur-[150px] pointer-events-none mix-blend-screen" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-fuchsia-600/20 blur-[150px] pointer-events-none mix-blend-screen" />
 
       <div className="max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8 relative z-10">
         <motion.div 
@@ -104,7 +98,7 @@ const ResumeAnalysis = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="lg:col-span-4 bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl p-8 flex flex-col gap-8 h-fit"
+            className="lg:col-span-4 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] p-8 flex flex-col gap-8 h-fit hover:border-white/20 transition-all duration-500"
           >
             <div>
               <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-2">Subject Designation</h3>
@@ -134,18 +128,9 @@ const ResumeAnalysis = () => {
 
             {profile.experience && profile.experience.length > 0 && (
               <div className="mt-2 text-sm text-slate-300">
-                <h3 className="text-xs font-black text-purple-400 uppercase tracking-widest mb-2">Experience</h3>
-                <ul className="list-disc pl-5 space-y-1">
+                <h3 className="text-xs font-black text-purple-400 uppercase tracking-widest mb-2 flex items-center gap-2">Experience <Server className="w-3 h-3"/></h3>
+                <ul className="list-disc pl-5 space-y-2">
                   {profile.experience.map((exp, i) => <li key={i}>{exp}</li>)}
-                </ul>
-              </div>
-            )}
-
-            {profile.projects && profile.projects.length > 0 && (
-              <div className="mt-2 text-sm text-slate-300">
-                <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-2">Projects</h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  {profile.projects.map((proj, i) => <li key={i}>{proj}</li>)}
                 </ul>
               </div>
             )}
@@ -161,79 +146,64 @@ const ResumeAnalysis = () => {
 
             <div>
                <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-3">Codebase Locator</h3>
-               {profile.githubUsername ? (
-                 <a 
-                   href={profile.githubProfileUrl} 
-                   target="_blank" 
-                   rel="noopener noreferrer" 
-                   className="flex items-center gap-3 mt-2 p-3 bg-slate-800/50 rounded-xl border border-slate-700 hover:bg-slate-800 hover:border-indigo-500/50 transition-all group"
-                 >
-                   <Github className="w-6 h-6 text-slate-400 group-hover:text-indigo-400 transition-colors" />
-                   <span className="text-slate-300 font-medium group-hover:text-white transition-colors">
-                     @{profile.githubUsername}
-                   </span>
-                 </a>
-               ) : (
-                 <p className="text-sm text-slate-500 italic bg-slate-800/20 p-3 rounded-xl border border-slate-800">GitHub coordinate null.</p>
-               )}
+               <a 
+                 href="https://github.com/SaurabhTiwari0108" 
+                 target="_blank" 
+                 rel="noopener noreferrer" 
+                 className="flex items-center gap-3 mt-2 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:border-indigo-500/50 hover:shadow-[0_0_20px_-5px_rgba(79,70,229,0.3)] transition-all group duration-300"
+               >
+                 <Github className="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform" />
+                 <span className="text-white font-semibold">
+                   @SaurabhTiwari0108
+                 </span>
+               </a>
             </div>
           </motion.div>
 
-          {/* Repositories Card */}
+          {/* Extracted Projects Card */}
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="lg:col-span-8 bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl p-8"
+            className="lg:col-span-8 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] p-8 hover:border-white/20 transition-all duration-500"
           >
             <div className="flex items-center gap-3 mb-8 border-b border-slate-800 pb-5">
-              <div className="p-2 bg-fuchsia-500/20 rounded-lg">
-                 <Code className="w-6 h-6 text-fuchsia-400" />
+              <div className="p-2 bg-emerald-500/20 rounded-lg">
+                 <Code className="w-6 h-6 text-emerald-400" />
               </div>
-              <h2 className="text-2xl font-bold text-white">Repository Deep Scan</h2>
+              <h2 className="text-2xl font-bold text-white">Extracted Projects Array</h2>
             </div>
 
-            {!profile.githubUsername ? (
+            {!profile.projects || profile.projects.length === 0 ? (
               <div className="text-center py-16 px-4 bg-slate-800/30 rounded-2xl border border-dashed border-slate-700">
-                <Github className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                <p className="text-slate-300 font-medium text-lg">GitHub sync disabled.</p>
-                <p className="text-sm text-slate-500 mt-2">Simulation parameters will rely strictly on parsed CV skills.</p>
-              </div>
-            ) : repos.length === 0 ? (
-              <div className="text-center py-16 px-4 bg-slate-800/30 rounded-2xl border border-slate-800">
-                <p className="text-slate-500 font-medium text-lg">No public structural data found.</p>
+                <Code className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                <p className="text-slate-300 font-medium text-lg">No projects detected in resume.</p>
+                <p className="text-sm text-slate-500 mt-2">Questions will rely strongly on your core skills instead.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {repos.slice(0, 6).map((repo, i) => (
-                  <motion.a 
-                    key={repo.name} 
-                    href={repo.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                {profile.projects.map((proj, i) => (
+                  <motion.div 
+                    key={i} 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 + (i * 0.1) }}
-                    className="block p-5 bg-slate-800/40 border border-slate-700 rounded-2xl hover:bg-slate-800 hover:border-fuchsia-500/40 hover:shadow-[0_0_20px_-5px_rgba(217,70,239,0.15)] transition-all group relative overflow-hidden"
+                    className="block p-6 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 hover:border-emerald-500/40 hover:shadow-[0_10px_30px_-5px_rgba(52,211,153,0.15)] transition-all group relative overflow-hidden duration-300"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/0 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative z-10">
-                      <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-bold text-slate-200 group-hover:text-fuchsia-300 truncate mr-3 text-lg transition-colors">{repo.name}</h4>
-                        {repo.language && (
-                          <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 bg-slate-900 border border-slate-700 text-slate-400 rounded-md whitespace-nowrap">
-                            {repo.language}
-                          </span>
-                        )}
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="relative z-10 flex flex-col h-full">
+                      <div className="flex items-start mb-3 gap-2">
+                         <div className="mt-1 min-w-2 min-h-2 w-2 h-2 rounded-full bg-emerald-400/80 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                         <p className="text-sm text-slate-300 line-clamp-4 leading-relaxed group-hover:text-slate-200 transition-colors">
+                           {proj}
+                         </p>
                       </div>
-                      <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed mb-5 h-10">
-                        {repo.description || 'No system definition provided.'}
-                      </p>
-                      <div className="flex items-center text-xs font-bold uppercase tracking-widest text-indigo-400/70 group-hover:text-fuchsia-400 transition-colors">
-                        Inspect Struct <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      <div className="mt-auto pt-4 flex justify-between items-center text-xs font-bold uppercase tracking-widest text-indigo-400/70 group-hover:text-emerald-400 transition-colors">
+                        <span>Project Context</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
-                  </motion.a>
+                  </motion.div>
                 ))}
               </div>
             )}

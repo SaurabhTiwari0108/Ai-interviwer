@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { generateQuestionsForRound } from './services/gemini.service.js';
+import { generateQuestionsForRound } from './services/ai.service.js';
 
 dotenv.config();
 

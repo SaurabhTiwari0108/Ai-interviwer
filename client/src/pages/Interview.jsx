@@ -55,6 +55,7 @@ const Interview = () => {
   // Voice Recording state
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef(null);
+  const videoRef = useRef(null);
 
   // Timer State
   const [timeLeft, setTimeLeft] = useState(ROUND_DURATIONS_SECONDS[currentRoundNum] || 3600);
@@ -190,6 +191,31 @@ const Interview = () => {
      }
   }, [currentQuestion, currentRoundNum]);
 
+  useEffect(() => {
+    let stream = null;
+    
+    const initCamera = async () => {
+      try {
+        if (currentRoundNum === 4 && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        }
+      } catch (err) {
+        console.error("Camera access error:", err);
+      }
+    };
+
+    initCamera();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [currentRoundNum]);
+
   const toggleRecording = () => {
     if (isRecording) {
       recognitionRef.current?.stop();
@@ -322,9 +348,12 @@ const Interview = () => {
   const isCodeLocked = currentRoundNum === 3 && r3CodeSubmitted[currentQuestion?._id];
 
   return (
-    <div className="h-[calc(100vh-4rem)] w-full bg-[#0a0a0a] text-slate-300 p-2 flex flex-col font-sans">
+    <div className="h-[calc(100vh-4rem)] w-full bg-[#030712] text-slate-300 p-2 flex flex-col font-sans relative overflow-hidden">
+      {/* Abstract Background Elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/20 blur-[150px] pointer-events-none mix-blend-screen" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-fuchsia-600/20 blur-[150px] pointer-events-none mix-blend-screen" />
       
-      <div className="flex items-center justify-between px-2 mb-2 shrink-0">
+      <div className="flex items-center justify-between px-2 mb-2 shrink-0 relative z-10">
         <div className="flex items-center gap-3">
            <div className="bg-[#1e1e1e] border border-slate-800 px-3 py-1 rounded text-xs font-bold text-slate-400">
              Phase {currentRoundNum}: {round.title}
@@ -361,8 +390,8 @@ const Interview = () => {
       <div className="flex flex-col lg:flex-row gap-2 flex-grow overflow-hidden">
         
         {/* Description Pane */}
-        <div className={`w-full ${[4, 5].includes(currentRoundNum) ? 'lg:w-[60%]' : 'lg:w-[45%]'} bg-[#1e1e1e] rounded-lg border border-slate-800 flex flex-col overflow-hidden`}>
-          <div className="h-10 bg-[#2d2d2d] flex items-center px-4 border-b border-slate-800 shrink-0">
+        <div className={`w-full ${[4, 5].includes(currentRoundNum) ? 'lg:w-[60%]' : 'lg:w-[45%]'} bg-white/5 backdrop-blur-3xl rounded-[1.5rem] border border-white/10 flex flex-col overflow-hidden relative z-10 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]`}>
+          <div className="h-10 bg-white/5 flex items-center px-4 border-b border-white/10 shrink-0">
             <span className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2"><FileText className="w-3.5 h-3.5" /> Description</span>
           </div>
           <div className="flex-grow p-6 overflow-y-auto custom-scrollbar">
@@ -391,14 +420,14 @@ const Interview = () => {
 
         {/* Interaction Pane */}
         {![4, 5].includes(currentRoundNum) && (
-          <div className="w-full lg:w-[55%] flex flex-col gap-2 overflow-hidden">
+          <div className="w-full lg:w-[55%] flex flex-col gap-3 overflow-hidden relative z-10">
             
-            <div className="bg-[#1e1e1e] rounded-lg border border-slate-800 flex flex-col overflow-hidden flex-grow relative">
+            <div className="bg-white/5 backdrop-blur-3xl rounded-[1.5rem] border border-white/10 flex flex-col overflow-hidden flex-grow relative shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]">
               
               {currentRoundNum === 3 && isCodeLocked && (
-                 <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-6">
+                 <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-md z-10 flex flex-col items-center justify-center p-6">
                     <RobotInterviewer message={robotMessage} isSpeaking={robotSpeaking} onSpeechEnd={() => setRobotSpeaking(false)} />
-                    <div className="bg-slate-800 mt-6 px-6 py-3 rounded-full border border-slate-700 text-slate-300 font-bold flex items-center gap-2 shadow-xl">
+                    <div className="bg-white/10 mt-6 px-6 py-3 rounded-full border border-white/20 text-slate-200 font-bold flex items-center gap-2 shadow-xl backdrop-blur-3xl">
                       Code Locked. Please activate microphone to explain your logic.
                     </div>
                  </div>
@@ -452,10 +481,11 @@ const Interview = () => {
                 ) : (
                   <div className="flex-grow overflow-hidden">
                     <Editor
+                      key={currentQuestion?._id || 'editor'}
                       height="100%"
                       language={language}
                       theme="vs-dark"
-                      value={curState.code}
+                      defaultValue={curState.code}
                       onChange={(val) => updateAnswer('code', val || '')}
                       options={{ minimap: { enabled: false }, fontSize: 14, fontFamily: "monospace", padding: { top: 16 } }}
                     />
@@ -495,8 +525,8 @@ const Interview = () => {
             </div>
 
             {/* Sub-Footer Logic */}
-            <div className="h-[52px] bg-[#1e1e1e] rounded-lg border border-slate-800 flex items-center justify-between px-4 shrink-0 shadow-sm">
-               <button onClick={() => navigate(`/interview-hub/${interviewId}`)} className="text-xs text-slate-400 hover:text-white font-semibold flex items-center gap-1 transition-colors" disabled={submitting}>Pause Session</button>
+            <div className="h-[60px] bg-white/5 backdrop-blur-3xl rounded-[1.5rem] border border-white/10 flex items-center justify-between px-4 shrink-0 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] relative z-10">
+               <button onClick={() => navigate(`/interview-hub/${interviewId}`)} className="text-xs text-slate-300 hover:text-white font-semibold flex items-center gap-1 transition-colors" disabled={submitting}>Pause Session</button>
                
                <div className="flex items-center gap-3">
                  {currentRoundNum === 1 && (
@@ -528,21 +558,21 @@ const Interview = () => {
         {[4, 5].includes(currentRoundNum) && (
           <div className="w-full lg:w-[40%] flex flex-col gap-4 overflow-hidden relative">
              {/* Robot Interviewer */}
-             <div className="bg-[#1e1e1e] rounded-lg border border-slate-800 p-6 flex flex-col items-center justify-center flex-shrink-0">
+             <div className="bg-white/5 backdrop-blur-3xl rounded-[1.5rem] border border-white/10 p-6 flex flex-col items-center justify-center flex-shrink-0 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]">
                 <RobotInterviewer message={robotMessage} isSpeaking={robotSpeaking} onSpeechEnd={() => setRobotSpeaking(false)} />
              </div>
              
              {/* Camera (Round 4) */}
              {currentRoundNum === 4 && (
-                <div className="bg-black rounded-lg border border-slate-800 overflow-hidden flex-grow flex items-center justify-center relative">
+                <div className="bg-black rounded-xl border border-slate-700/50 overflow-hidden flex-grow flex items-center justify-center relative shadow-2xl">
                    <video ref={videoRef} autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover" />
-                   <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold font-mono tracking-widest text-slate-300 border border-slate-700 flex items-center gap-2">
+                   <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold font-mono tracking-widest text-slate-300 border border-slate-700 flex items-center gap-2 shadow-lg">
                      <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> LIVE
                    </div>
                 </div>
              )}
              
-             <div className="mt-auto bg-[#1e1e1e] p-4 border border-slate-800 rounded-xl shadow-2xl flex flex-col gap-3">
+             <div className="mt-auto bg-white/5 backdrop-blur-3xl p-4 border border-white/10 rounded-[1.5rem] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] flex flex-col gap-3">
                <button
                   onClick={toggleRecording}
                   className={`flex justify-center items-center gap-2 px-6 py-3.5 rounded-xl font-bold transition-all shadow-lg ${

@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import { extractTextFromPDF } from '../services/pdf.service.js';
-import { extractProfileFromResume } from '../services/gemini.service.js';
+import { extractProfileFromResume } from '../services/ai.service.js';
 import fs from 'fs';
 
 export const uploadResume = async (req, res) => {
